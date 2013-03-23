@@ -1,0 +1,19 @@
+sebastiano	KEYWORD1
+
+
+teatro	KEYWORD1
+
+create_instance	KEYWORD2
+push	KEYWORD2
+get_delta_us	KEYWORD2
+set_input_function	KEYWORD2
+
+
+scena	KEYWORD1
+
+pre_update	KEYWORD2
+update	KEYWORD2
+post_update	KEYWORD2
+draw	KEYWORD2
+next_update_pointer	KEYWORD2
+

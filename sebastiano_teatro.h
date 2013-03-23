@@ -23,6 +23,16 @@ class teatro {
 protected:
 private:
 public:
+	struct input_axis_type {
+		int8_t	axis[2];
+	};
+	typedef uint8_t input_button_type;
+	struct input_type : input_axis_type {
+		input_button_type	button;
+	};
+	typedef input_type(*input_function_type)(void *data);
+
+
 	//-- Public Variable -------------- 公開変数 -------------------------------
 	//-- Public Function -------------- 公開関数 -------------------------------
 	//==============================================================================
@@ -61,9 +71,51 @@ public:
 		@return 前回からの経過マイクロ秒
 	/*///===========================================================================
 	uint32_t get_delta_us() const;
+	
+	//==============================================================================
+	/*! teatro::get_direct_axis
+		軸入力取得
+	
+		@return 軸入力
+	/*///===========================================================================
+	input_axis_type get_direct_axis() const;
+
+	//==============================================================================
+	/*! teatro::get_direct_button
+		ボタン入力取得
+	
+		@return ボタン入力
+	/*///===========================================================================
+	input_button_type get_direct_button() const;
+
+	//==============================================================================
+	/*! teatro::get_onedge_button
+		ONエッジ入力取得
+	
+		@return ONエッジ入力
+	/*///===========================================================================
+	input_button_type get_onedge_button() const;
+
+	//==============================================================================
+	/*! teatro::get_offedge_button
+		OFFエッジ入力取得
+	
+		@return OFFエッジ入力
+	/*///===========================================================================
+	input_button_type get_offedge_button() const;
 
 
 	//-- Seter Function --------------- 設定関数 -------------------------------
+	//==============================================================================
+	/*! teatro::set_input_function
+		入力関数設定
+	
+		@param	func	[in]	入力コールバック関数
+		@param	data	[in]	入力コールバック関数引数
+	/*///===========================================================================
+	void set_input_function(input_function_type func, void *data = NULL);
+
+
 	//-- Constructor And Destructor --- コンストラクタ・デストラクタ -----------
 	//==============================================================================
 	/*! teatro::teatro
@@ -101,6 +153,12 @@ private:
 	scena		*m_scene_buffer[8];	//<シーンバッファ
 	uint32_t	m_last_update_time;	//<前回の更新時刻
 	uint32_t	m_delta_us;			//<前回の経過マイクロ秒
+	struct {
+		input_function_type	func;
+		void				*data;
+		input_type			crnt_state;
+		input_button_type	prev_button;
+	}			m_input;			//<入力関数
 
 
 	static uint8_t s_instance[];
@@ -111,6 +169,7 @@ protected:
 private:
 	void *operator new(size_t size, void *buf);
 	void operator delete(void *ptr, void *buf);
+	void update_input();
 
 
 //------------------------------------------------------------------------------

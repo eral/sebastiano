@@ -95,6 +95,8 @@ void teatro::operator()()
 	for (scena **scene = m_scene_buffer + m_scene_size, **scene_end = m_scene_buffer; scene != scene_end; --scene) {
 		(*(scene - 1))->pre_update(*this);
 	}
+	//入力更新
+	update_input();
 	//シーン更新(逆順)
 	for (scena **scene = m_scene_buffer + m_scene_size, **scene_end = m_scene_buffer; scene != scene_end; --scene) {
 		(*(scene - 1))->update(*this);
@@ -138,8 +140,66 @@ uint32_t teatro::get_delta_us() const
 	return m_delta_us;
 }
 
+//==============================================================================
+/*! teatro::get_direct_axis
+	軸入力取得
+
+	@return 軸入力
+/*///===========================================================================
+teatro::input_axis_type teatro::get_direct_axis() const
+{
+	return m_input.crnt_state;
+}
+
+//==============================================================================
+/*! teatro::get_direct_button
+	ボタン入力取得
+
+	@return ボタン入力
+/*///===========================================================================
+teatro::input_button_type teatro::get_direct_button() const
+{
+	return m_input.crnt_state.button;
+}
+
+//==============================================================================
+/*! teatro::get_onedge_button
+	ONエッジ入力取得
+
+	@return ONエッジ入力
+/*///===========================================================================
+teatro::input_button_type teatro::get_onedge_button() const
+{
+	return m_input.crnt_state.button & ~m_input.prev_button;
+}
+
+//==============================================================================
+/*! teatro::get_offedge_button
+	OFFエッジ入力取得
+
+	@return OFFエッジ入力
+/*///===========================================================================
+teatro::input_button_type teatro::get_offedge_button() const
+{
+	return ~m_input.crnt_state.button & m_input.prev_button;
+}
+
 
 //■//-- Set Function ----------------- 設定関数 -------------------------------
+//==============================================================================
+/*! teatro::set_input_function
+	入力関数設定
+
+	@param	func	[in]	入力コールバック関数
+	@param	data	[in]	入力コールバック関数引数
+/*///===========================================================================
+void teatro::set_input_function(input_function_type func, void *data)
+{
+	m_input.func = func;
+	m_input.data = data;
+}
+
+
 //■//-- Constructor And Destructor --- コンストラクタ・デストラクタ -----------
 //==============================================================================
 /*! teatro::teatro
@@ -154,6 +214,8 @@ teatro::teatro(): m_scene_size(0)
 	for (scena **scene = m_scene_buffer, **scene_end = m_scene_buffer + m_scene_size; scene != scene_end; ++scene) {
 		*scene = NULL;
 	}
+	m_input.func = NULL;
+	m_input.data = NULL;
 
 	m_last_update_time = micros();
 	m_delta_us = 0;
@@ -195,6 +257,18 @@ void *teatro::operator new(size_t size, void *buf)
 void teatro::operator delete(void *ptr, void *buf)
 {
 	*reinterpret_cast<uint8_t *>(ptr) = uint8_t(-1);
+}
+
+//==============================================================================
+/*! teatro::update_input
+	入力更新
+/*///===========================================================================
+void teatro::update_input()
+{
+	if (m_input.func) {
+		m_input.prev_button = m_input.crnt_state.button;
+		m_input.crnt_state = m_input.func(m_input.data);
+	}
 }
 
 

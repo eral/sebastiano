@@ -31,8 +31,9 @@ namespace {
 			};
 		};
 		static sebastiano::teatro::input_type update(void *data) {
+			const int c_analog_offset = int(0.75f * (1 << 7));
 			int pin3 = analogRead(3);
-			uint8_t btn = (pin3 + 16) >> 7;
+			uint8_t btn = (pin3 + c_analog_offset) >> 7;
 			sebastiano::teatro::input_type result;
 			result.axis[0] = result.axis[0] = int8_t(0);
 			switch (btn) {

@@ -2,6 +2,10 @@ sebastiano	KEYWORD1
 
 
 teatro	KEYWORD1
+input_axis_type	KEYWORD1
+input_button_type	KEYWORD1
+input_type	KEYWORD1
+input_function_type	KEYWORD1
 
 create_instance	KEYWORD2
 push	KEYWORD2
